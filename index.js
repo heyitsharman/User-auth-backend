@@ -12,6 +12,7 @@ app.use(express.urlencoded({extended:true}));
 app.get("/",(req,res)=>{
     
 })
+
 app.use("/auth",authRouter);
 
 connectDB().then(()=>{

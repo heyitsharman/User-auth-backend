@@ -2,6 +2,7 @@ const express = require('express');
 const User = require('../models/user.model');
 const router = express.Router();
 const bcrypt = require('bcrypt');
+const jwt = require("jsonwebtoken");
 
 router.post("/signup",async(req,res)=>{
     try{
@@ -37,6 +38,8 @@ router.post("/login",async(req,res)=>{
         if(!isMatched){
             throw new Error("Invalid email or password");
         }
+        
+        const token = jwt.sign({id: user._id,name:user.name},)
         res.status(200).json({message: "You are loggedin"});
     }
     catch(error){
