@@ -42,6 +42,7 @@ router.post("/login",async(req,res)=>{
         // jwt.sign(payload, secretOrPrivateKey, [options, callback])
         const token = jwt.sign({id: user._id,name:user.name},process.env.JWT_SECRET,{expiresIn:'2 days',algorithm:'HS256'}
         );
+        res.cookie("token",token,{httpOnly:true, secure:true, maxAge:24*60*60*1000});
         res.status(200).json({message: "You are loggedin", token:token});
     }
     catch(error){
@@ -53,7 +54,7 @@ router.get("/check",verifyAuth,async(req,res)=>{
     try{
         const userData = req.user;
         // res.send("hello");
-        res.status(200).json({user:payload});
+        res.status(200).json({user : userData});
     }
     catch(error){
         res.status(400).json({message: error.message});
