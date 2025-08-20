@@ -3,6 +3,7 @@ const User = require('../models/user.model');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
+const verifyAuth = require('../middleware/auth.middleware');
 
 router.post("/signup",async(req,res)=>{
     try{
@@ -48,11 +49,9 @@ router.post("/login",async(req,res)=>{
     }
 })
 
-router.get("/check",async(req,res)=>{
+router.get("/check",verifyAuth,async(req,res)=>{
     try{
-        const authorization = req.headers.authorization;
-        const token = authorization.split(" ")[1];
-        const payload = jwt.verify(token,process.env.JWT_SECRET);
+        const userData = req.user;
         // res.send("hello");
         res.status(200).json({user:payload});
     }
