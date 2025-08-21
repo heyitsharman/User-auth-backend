@@ -4,7 +4,7 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
 const verifyAuth = require('../middleware/auth.middleware');
-
+const verifyAdmin = require('../middleware/admin.middleware');
 router.post("/signup",async(req,res)=>{
     try{
         const {name,email,password}=req.body;
@@ -24,6 +24,38 @@ router.post("/signup",async(req,res)=>{
         res.status(500).json({message: error.message})
     }
 })
+
+router.post("/admin/signup",async(req,res)=>{
+    try{
+        const {name,email,password}=req.body;
+        if(!name || !email || !password){
+            throw new Error("All fields are required");
+        }
+        const hashPass = await bcrypt.hash(password,10);
+
+        const user = await User.create({
+            name: name,
+            email: email,
+            password: hashPass,
+            role:"admin"
+        })
+        res.status(201).json({user,message : "user created successfully"});
+    }
+    catch(error){
+        res.status(500).json({message: error.message})
+    }
+})
+
+router.get("/info",verifyAuth,verifyAdmin,async(req,res)=>{
+    try{
+        const users = await User.find({role:{$ne:"admin"}});
+        res.status(200).json({users})
+    }
+    catch(error){
+        res.status(500).json({message: error.message})
+    }
+})
+
 
 router.post("/login",async(req,res)=>{
     try{
